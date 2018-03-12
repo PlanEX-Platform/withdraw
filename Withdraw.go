@@ -3,14 +3,15 @@ package main
 import (
 	"eth-withdraw/config"
 	"fmt"
-	"github.com/zhooq/go-ethereum/rpc"
 	"github.com/howeyc/gopass"
 	"os"
 	"eth-withdraw/accounts"
 	"eth-withdraw/logger"
 	"runtime"
-	"eth-withdraw/listener"
+	"eth-withdraw/txupdater"
 	"github.com/zhooq/go-ethereum/ethclient"
+	"github.com/zhooq/go-ethereum/rpc"
+	"eth-withdraw/listener"
 )
 
 const (
@@ -36,6 +37,7 @@ func main() {
 		fmt.Println("Failed to connect to the Ethereum client: %v", err)
 	}
 
+	go txupdater.StartTxUpdating(client)
 	listener.StartListener(client, conn)
 
 }
@@ -55,4 +57,5 @@ func setup() {
 	config.CFG.DBName = "hirama"
 	config.CFG.DBUser = "hirama"
 	config.CFG.DBPassword = "hirama"
+	config.CFG.RequiredConfirmations = 10
 }

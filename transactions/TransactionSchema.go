@@ -78,6 +78,14 @@ func (schema *TransactionSchema) Pending() ([]Transaction, error) {
 	return txs, err
 }
 
+func (schema *TransactionSchema) Unconfirmed(requiredConfirmations uint) ([]Transaction, error) {
+	var txs []Transaction
+	err := schema.db.Model(&txs).
+		Where("confirmations < ?", requiredConfirmations).
+		Select()
+	return txs, err
+}
+
 func (schema TransactionSchema) Update(tx Transaction) error {
 	err := schema.db.Update(&tx)
 	return err

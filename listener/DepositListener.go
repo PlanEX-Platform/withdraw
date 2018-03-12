@@ -27,6 +27,7 @@ type BlockP struct {
 }
 
 type TransactionHandler func(transaction Transaction) error
+
 var acs = &accounts.AccountSchema{}
 var transactions = &tx.TransactionSchema{}
 
@@ -35,16 +36,7 @@ func UpdateBalance(tx *Transaction) {
 	transactions.Init()
 
 	acc, err := acs.ByAddress(tx.To)
-
-	if err != nil {
-		logger.Log.Println("Plus - Select account ", tx.To, err)
-	}
-
 	_, err = transactions.ByTxID(tx.Hash)
-
-	if err != nil {
-		logger.Log.Println("Select tx ", tx.Hash, err)
-	}
 
 	// check account in db
 	if acc.EthAddress != "" && err != nil {
@@ -71,7 +63,7 @@ func GetBalance(client *ethclient.Client, account common.Address) (*big.Int, err
 
 func StartListener(l *rpc.Client, conn *ethclient.Client) {
 
-	log.Println("Started listener:")
+	log.Println("Started listener")
 
 	clientSubscription(l, conn)
 
@@ -106,11 +98,7 @@ func processBlock(block *types.Block) error {
 		}
 
 		UpdateBalance(&txs)
-
-		logger.Log.Println(txs.Hash)
 	}
-
-	logger.Log.Println("Processed block hash: ", block.Hash().String())
 
 	return nil
 }
@@ -141,8 +129,6 @@ func clientSubscription(client *rpc.Client, conn *ethclient.Client) {
 		z.SetBytes(bs)
 
 		getBlock(conn, z)
-
-		logger.Log.Println("latest block: ", z)
 	}
 }
 
