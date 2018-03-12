@@ -12,8 +12,7 @@ import (
 	"eth-withdraw/accounts"
 	"log"
 	"github.com/zhooq/go-ethereum/rpc"
-	"strings"
-	"encoding/hex"
+	"eth-withdraw/util"
 )
 
 type Transaction struct {
@@ -41,10 +40,10 @@ func UpdateBalance(tx *Transaction) {
 	// check account in db
 	if acc.EthAddress != "" && err != nil {
 		logger.Log.Println("Increase balance for: %s", acc.EthAddress)
-		amount, _ := new(big.Int).SetString(acc.Balance, 10)
-		newAmount, _ := new(big.Int).SetString(tx.ValueWei.String(), 10)
+		amount, _ := utils.ParseBigInt(acc.Balance)
+		newAmount, _ := utils.ParseBigInt(tx.ValueWei.String())
 
-		sum := new(big.Int).Add(amount, newAmount)
+		sum := new(big.Int).Add(&amount, &newAmount)
 		acc.Balance = sum.String()
 		acs.Update(acc)
 		transactions.Create(tx.Hash, true, "in", 1, acc.PlanexID)
@@ -119,16 +118,9 @@ func clientSubscription(client *rpc.Client, conn *ethclient.Client) {
 
 	// Print events from the subscription as they arrive.
 	for block := range subch {
-		s := strings.TrimLeft(block.Number, "0x")
-		bs, err := hex.DecodeString(s)
-		if err != nil {
-			panic(err)
-		}
+		blockNumber, _ := utils.ParseBigInt(block.Number)
 
-		z := new(big.Int)
-		z.SetBytes(bs)
-
-		getBlock(conn, z)
+		getBlock(conn, &blockNumber)
 	}
 }
 
