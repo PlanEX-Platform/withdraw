@@ -13,6 +13,17 @@ import (
 	"eth-withdraw/util"
 )
 
+type rpcTransaction struct {
+	tx *types.Transaction
+	txExtraInfo
+}
+
+type txExtraInfo struct {
+	BlockNumber *string
+	BlockHash   common.Hash
+	From        common.Address
+}
+
 func StartTxUpdating(client *rpc.Client) {
 
 	log.Println("TxUpdater Started")
@@ -23,17 +34,6 @@ func StartTxUpdating(client *rpc.Client) {
 			checkTs(client)
 		}
 	}()
-}
-
-type rpcTransaction struct {
-	tx *types.Transaction
-	txExtraInfo
-}
-
-type txExtraInfo struct {
-	BlockNumber *string
-	BlockHash   common.Hash
-	From        common.Address
 }
 
 var transactions = &tx.TransactionSchema{}
