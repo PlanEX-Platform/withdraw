@@ -10,6 +10,8 @@ DONE:
 TODO:
 
 - Confirm withdraw from email and 2-auth
+- API for stat of the account (tx status)
+- Security requests
 
 Аккамуляция - Проходит по всем кошелькам и собирает балансы с них в одно место
 
