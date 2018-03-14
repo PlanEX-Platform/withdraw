@@ -86,11 +86,6 @@ func (schema *AccountSchema) ByID(planexID string) (Account, error) {
 	err := schema.db.Model(acc).
 		Where("planex_id = ?", planexID).
 		Select()
-	if acc.EthAddress == "" {
-		newAddr, PrivKey := GetAccount()
-		newAcc, _ := schema.Create(planexID, newAddr, PrivKey)
-		acc = &newAcc
-	}
 	return *acc, err
 }
 
@@ -99,6 +94,13 @@ func (schema *AccountSchema) ByAddress(ethAddress string) (Account, error) {
 	err := schema.db.Model(&account).
 		Where("eth_address = ?", ethAddress).
 		Select()
+	return account, err
+}
+
+func (schema *AccountSchema) ByAmountRequired(amount string) (Account, error) {
+	account := Account{}
+	err := schema.db.Model(&account).
+		Where("balance <= ?", amount).First()
 	return account, err
 }
 

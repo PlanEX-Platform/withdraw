@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"eth-withdraw/config"
 	"github.com/go-pg/pg"
+	"eth-withdraw/logger"
 )
 
 type Transaction struct {
@@ -95,11 +96,12 @@ func (schema TransactionSchema) UpdateConfirmation(txId string, confirmations in
 	tx := Transaction{}
 	_, err := schema.db.Model(&tx).
 		Set("confirmations = ?", confirmations).
+		Set("mined = ?", true).
 		Where("tx_id = ?", txId).
 		Returning("*").
 		Update()
 	if err != nil {
-		panic(err)
+		logger.Log.Println(err)
 	}
 
 	var txs []Transaction

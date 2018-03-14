@@ -1,8 +1,11 @@
 package config
 
+import "math/big"
+
 type Config struct {
 	BlockchainEndpoint    string
-	GasPrice              string
+	GasPrice              *big.Int
+	GasLimit              *big.Int
 	DBAddr                string
 	DBName                string
 	DBUser                string
