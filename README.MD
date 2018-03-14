@@ -1,7 +1,5 @@
 BUGS:
 
-decrease balance in db after withdraw
-
 DONE:
 
 - Catch deposit after 10 confirmations

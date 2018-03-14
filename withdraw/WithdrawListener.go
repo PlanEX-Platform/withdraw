@@ -4,7 +4,6 @@ import (
 	"github.com/zhooq/go-ethereum/ethclient"
 	"context"
 	"time"
-	"log"
 	"github.com/zhooq/go-ethereum/core/types"
 	"github.com/zhooq/go-ethereum/common"
 	"math/big"
@@ -26,16 +25,8 @@ import (
 var acs = &accounts.AccountSchema{}
 var transactions = &tx.TransactionSchema{}
 
-//func StartWithDrawListener() {
-//
-//	//add = common.Address.SetString("")
-//	log.Println("Withdraw listener started")
-//
-//}
-
-
 type withdrawRequest struct {
-	PlanexID    string `json:"id"`
+	PlanexID   string `json:"id"`
 	EthAddress string `json:"to"`
 	Amount     string `json:"amount"`
 }
@@ -75,19 +66,11 @@ func MakeWithdraw(w http.ResponseWriter, r *http.Request, ps httprouter.Params) 
 }
 
 func proccedWitdraw(to *common.Address, amount *big.Int) (*types.Transaction, error) {
-	//acs.Init()
 	transactions.Init()
-
-	// Проверям на кошельках необходимое количество эфиров
-	//utils.ParseBigInt(config.CFG.GasPrice)
-
-	//log.Println("Amount: ", amount.String())
 
 	var amountWithFee = big.NewInt(0)
 	var fee = big.NewInt(0).Mul(config.CFG.GasLimit, config.CFG.GasPrice)
 	amountWithFee.Add(amount, fee)
-
-	//log.Println("Amount with FEE: ", amountWithFee.String())
 
 	acc, err := acs.ByAmountRequired(amountWithFee.String())
 
@@ -95,8 +78,6 @@ func proccedWitdraw(to *common.Address, amount *big.Int) (*types.Transaction, er
 		logger.Log.Println(err)
 	} else {
 		privkey, err := ciph.Decrypt(acc.KeyStore, acc.Nonce, accounts.KEY)
-
-		//log.Println("Decodet Private key: ", privkey)
 
 		if err != nil {
 			logger.Log.Println(err)
@@ -108,7 +89,11 @@ func proccedWitdraw(to *common.Address, amount *big.Int) (*types.Transaction, er
 				return nil, err
 			} else {
 				logger.Log.Println("Store to DB: ", txout.Hash().Hex())
-				transactions.Create(txout.Hash().Hex(), false, "out", -1, acc.PlanexID)
+				transactions.Create(txout.Hash().Hex(), false, "out", 0, acc.PlanexID)
+				accBalance, _ := utils.ParseBigInt(acc.Balance)
+				accBalance.Sub(&accBalance, amountWithFee)
+				acc.Balance = accBalance.String()
+				acs.Update(acc)
 				return txout, err
 			}
 		}
@@ -122,9 +107,6 @@ func sendTx(to *common.Address, amount *big.Int, privkey string) (*types.Transac
 	ctx, cancel := context.WithDeadline(context.Background(), d)
 	defer cancel()
 
-	//unlockedKey, err := keystore.DecryptKey([]byte(key), password)
-
-	//hex.EncodeToString(crypto.FromECDSA(privkey))
 	conn, err := ethclient.Dial(config.CFG.BlockchainEndpoint)
 
 	if err != nil {
@@ -132,32 +114,19 @@ func sendTx(to *common.Address, amount *big.Int, privkey string) (*types.Transac
 	}
 
 	key, _ := crypto.HexToECDSA(privkey)
-	//addr := common.HexToAddress(privkey)
 	genAddr := crypto.PubkeyToAddress(key.PublicKey)
-
-	//log.Println("private key:", key)
-	//log.Println("public key:", genAddr.Hex())
-	//log.Println(conn.BalanceAt(ctx, genAddr, nil))
-	//log.Println("amount:", amount)
 
 	nonce, err := conn.NonceAt(ctx, genAddr, nil)
 
 	if err != nil {
 		logger.Log.Println("Cant get nonce", err)
 	} else {
-		//log.Println("Nonce: ", nonce)
-		//log.Println("Gas PRICE: ", config.CFG.GasPrice)
-
 		rawtx := types.NewTransaction(nonce, *to, amount, config.CFG.GasLimit, config.CFG.GasPrice, nil)
 
 		signTx, err := types.SignTx(rawtx, types.NewEIP155Signer(big.NewInt(1)), key)
 		if err != nil {
 			logger.Log.Println("Error from signied tx: ", err)
 		}
-		//
-		//log.Println("Signed TX: ", signTx)
-		//log.Println("Signed TX gasprice: ", signTx.GasPrice().String())
-		//log.Println("Signed TX gaslimit: ", signTx.Gas().String())
 
 		err = conn.SendTransaction(ctx, signTx)
 
