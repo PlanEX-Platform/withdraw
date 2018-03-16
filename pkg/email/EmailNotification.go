@@ -3,7 +3,7 @@ package email
 import (
 	"crypto/tls"
 	"gopkg.in/gomail.v2"
-	"eth-withdraw/config"
+	"eth-withdraw/pkg/config"
 )
 
 func sendNotification(emailAddress string, amount int)  {

@@ -3,8 +3,8 @@ package accounts
 import (
 	"encoding/hex"
 	"fmt"
-	"eth-withdraw/ciph"
-	"eth-withdraw/config"
+	"eth-withdraw/pkg/ciph"
+	"eth-withdraw/pkg/config"
 	"github.com/go-pg/pg"
 	"github.com/rkuris/go.uuid"
 	"github.com/zhooq/go-ethereum/crypto"

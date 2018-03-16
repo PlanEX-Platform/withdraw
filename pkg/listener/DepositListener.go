@@ -2,17 +2,17 @@ package listener
 
 import (
 	"math/big"
-	"eth-withdraw/logger"
-	"eth-withdraw/transactions"
 	"github.com/zhooq/go-ethereum/ethclient"
 	"github.com/zhooq/go-ethereum/common"
 	"context"
 	"github.com/zhooq/go-ethereum/core/types"
 	"time"
-	"eth-withdraw/accounts"
+	"eth-withdraw/pkg/accounts"
 	"log"
 	"github.com/zhooq/go-ethereum/rpc"
-	"eth-withdraw/util"
+	"eth-withdraw/pkg/transactions"
+	"eth-withdraw/pkg/logger"
+	"eth-withdraw/pkg/util"
 )
 
 type Transaction struct {

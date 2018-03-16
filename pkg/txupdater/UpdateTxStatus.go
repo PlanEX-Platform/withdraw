@@ -2,15 +2,15 @@ package txupdater
 
 import (
 	"time"
-	"eth-withdraw/transactions"
-	"eth-withdraw/logger"
-	"eth-withdraw/config"
+	"eth-withdraw/pkg/transactions"
+	"eth-withdraw/pkg/logger"
+	"eth-withdraw/pkg/config"
 	"log"
 	"context"
 	"github.com/zhooq/go-ethereum/common"
 	"github.com/zhooq/go-ethereum/rpc"
 	"github.com/zhooq/go-ethereum/core/types"
-	"eth-withdraw/util"
+	"eth-withdraw/pkg/util"
 )
 
 type rpcTransaction struct {

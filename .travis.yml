@@ -1,0 +1,9 @@
+language: go
+services:
+  - docker
+script:
+- make build
+- test -f bin/amd64/withdraw
+- make container
+- docker images | grep hirama/withdraw-amd64
+- make test

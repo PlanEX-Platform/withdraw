@@ -2,9 +2,9 @@ package tx
 
 import (
 	"fmt"
-	"eth-withdraw/config"
+	"eth-withdraw/pkg/config"
 	"github.com/go-pg/pg"
-	"eth-withdraw/logger"
+	"eth-withdraw/pkg/logger"
 )
 
 type Transaction struct {
