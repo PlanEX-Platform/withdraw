@@ -15,7 +15,7 @@ var (
 func init() {
 	// set location of log file
 	//var logpath = "/root/logs/sluise-" + strconv.FormatInt(time.Now().Unix(), 10) + ".log"
-	var logpath = "./withdraw-sluice-" + strconv.FormatInt(time.Now().Unix(), 10) + ".log"
+	var logpath = "./withdraw-" + strconv.FormatInt(time.Now().Unix(), 10) + ".log"
 
 	flag.Parse()
 	var file, err1 = os.Create(logpath)

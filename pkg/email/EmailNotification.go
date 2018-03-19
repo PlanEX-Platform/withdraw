@@ -14,7 +14,6 @@ func sendNotification(emailAddress string, amount int)  {
 	m.SetAddressHeader("Cc", "no-reply@planex.io", "PlanEX")
 	m.SetHeader("Subject", "Deposit Success Alert")
 	m.SetBody("text/html", "Hello, Your PlanEX's account has recharged " + string(amount) +" ETH.")
-	//m.Attach("/home/Alex/lolcat.jpg")
 
 
 	d := gomail.NewDialer(config.CFG.EmailServer, config.CFG.EmailPort, config.CFG.EmailUser, config.CFG.EmailPassword)

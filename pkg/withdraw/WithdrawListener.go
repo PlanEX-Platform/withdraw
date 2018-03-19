@@ -61,8 +61,6 @@ func MakeWithdraw(w http.ResponseWriter, r *http.Request, ps httprouter.Params) 
 		}
 	}
 
-	//fmt.Fprint(w, string("ok"))
-
 }
 
 func proccedWitdraw(to *common.Address, amount *big.Int) (*types.Transaction, error) {
