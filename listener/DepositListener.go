@@ -7,12 +7,12 @@ import (
 	"context"
 	"github.com/zhooq/go-ethereum/core/types"
 	"time"
-	"eth-withdraw/pkg/accounts"
+	"eth-withdraw/accounts"
 	"log"
 	"github.com/zhooq/go-ethereum/rpc"
-	"eth-withdraw/pkg/transactions"
-	"eth-withdraw/pkg/logger"
-	"eth-withdraw/pkg/util"
+	"eth-withdraw/transactions"
+	"eth-withdraw/logger"
+	"eth-withdraw/util"
 )
 
 type Transaction struct {

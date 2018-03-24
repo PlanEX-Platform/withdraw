@@ -2,15 +2,15 @@ package txupdater
 
 import (
 	"time"
-	"eth-withdraw/pkg/transactions"
-	"eth-withdraw/pkg/logger"
-	"eth-withdraw/pkg/config"
+	"eth-withdraw/transactions"
+	"eth-withdraw/logger"
 	"log"
 	"context"
 	"github.com/zhooq/go-ethereum/common"
 	"github.com/zhooq/go-ethereum/rpc"
 	"github.com/zhooq/go-ethereum/core/types"
-	"eth-withdraw/pkg/util"
+	"eth-withdraw/util"
+	"github.com/spf13/viper"
 )
 
 type rpcTransaction struct {
@@ -45,7 +45,7 @@ func checkTs(client *rpc.Client) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	txs, err := transactions.Unconfirmed(config.CFG.RequiredConfirmations)
+	txs, err := transactions.Unconfirmed(viper.GetInt("RequiredConfirmations"))
 
 	if err != nil {
 		logger.Log.Println("DB get tx error ", err)

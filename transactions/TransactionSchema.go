@@ -2,9 +2,9 @@ package tx
 
 import (
 	"fmt"
-	"eth-withdraw/pkg/config"
 	"github.com/go-pg/pg"
-	"eth-withdraw/pkg/logger"
+	"eth-withdraw/logger"
+	"github.com/spf13/viper"
 )
 
 type Transaction struct {
@@ -35,10 +35,10 @@ func (schema *TransactionSchema) Init() (*pg.DB, error) {
 	var db *pg.DB
 	if schema.db == nil {
 		db := pg.Connect(&pg.Options{
-			Addr:     config.CFG.DBAddr,
-			Database: config.CFG.DBName,
-			User:     config.CFG.DBUser,
-			Password: config.CFG.DBPassword,
+			Addr:     viper.GetString("DBAddr"),
+			Database: viper.GetString("DBName"),
+			User:     viper.GetString("DBUser"),
+			Password: viper.GetString("DBPassword"),
 		})
 		schema.db = db
 		for _, model := range []interface{}{&Transaction{}} {
@@ -79,7 +79,7 @@ func (schema *TransactionSchema) Pending() ([]Transaction, error) {
 	return txs, err
 }
 
-func (schema *TransactionSchema) Unconfirmed(requiredConfirmations uint) ([]Transaction, error) {
+func (schema *TransactionSchema) Unconfirmed(requiredConfirmations int) ([]Transaction, error) {
 	var txs []Transaction
 	err := schema.db.Model(&txs).
 		Where("confirmations < ?", requiredConfirmations).

@@ -7,19 +7,20 @@ import (
 	"github.com/zhooq/go-ethereum/core/types"
 	"github.com/zhooq/go-ethereum/common"
 	"math/big"
-	"eth-withdraw/pkg/config"
-	"eth-withdraw/pkg/accounts"
-	"eth-withdraw/pkg/transactions"
+	"eth-withdraw/accounts"
+	"eth-withdraw/transactions"
 	"github.com/zhooq/go-ethereum/crypto"
-	"eth-withdraw/pkg/ciph"
+	"eth-withdraw/ciph"
 	"github.com/julienschmidt/httprouter"
 	"fmt"
 	"net/http"
-	"eth-withdraw/pkg/logger"
-	"eth-withdraw/pkg/util"
+	"eth-withdraw/logger"
+	"eth-withdraw/util"
 	"io/ioutil"
 	"encoding/json"
 	"strings"
+	"log"
+	"github.com/spf13/viper"
 )
 
 var acs = &accounts.AccountSchema{}
@@ -53,7 +54,7 @@ func MakeWithdraw(w http.ResponseWriter, r *http.Request, ps httprouter.Params) 
 		if err != nil {
 			fmt.Fprint(w, err)
 		} else if restx != nil {
-			fmt.Fprint(w, string(restx.Hash().Hex()))
+			log.Println(w, string(restx.Hash().Hex()))
 			logger.Log.Println("Request id: %s", temp.PlanexID)
 			logger.Log.Println("Request host: %s Request method: %s", r.Host, r.Method)
 		} else {
@@ -67,7 +68,7 @@ func proccedWitdraw(to *common.Address, amount *big.Int) (*types.Transaction, er
 	transactions.Init()
 
 	var amountWithFee = big.NewInt(0)
-	var fee = big.NewInt(0).Mul(config.CFG.GasLimit, config.CFG.GasPrice)
+	var fee = big.NewInt(0).Mul(big.NewInt(viper.GetInt64("GasLimit")), big.NewInt(viper.GetInt64("GasPrice")))
 	amountWithFee.Add(amount, fee)
 
 	acc, err := acs.ByAmountRequired(amountWithFee.String())
@@ -105,7 +106,7 @@ func sendTx(to *common.Address, amount *big.Int, privkey string) (*types.Transac
 	ctx, cancel := context.WithDeadline(context.Background(), d)
 	defer cancel()
 
-	conn, err := ethclient.Dial(config.CFG.BlockchainEndpoint)
+	conn, err := ethclient.Dial(viper.GetString("BlockchainEndpoint"))
 
 	if err != nil {
 		fmt.Println("Failed to connect to the Ethereum client: %v", err)
@@ -119,11 +120,11 @@ func sendTx(to *common.Address, amount *big.Int, privkey string) (*types.Transac
 	if err != nil {
 		logger.Log.Println("Cant get nonce", err)
 	} else {
-		rawtx := types.NewTransaction(nonce, *to, amount, config.CFG.GasLimit, config.CFG.GasPrice, nil)
+		rawtx := types.NewTransaction(nonce, *to, amount, big.NewInt(viper.GetInt64("GasLimit")), big.NewInt(viper.GetInt64("GasPrice")), nil)
 
 		signTx, err := types.SignTx(rawtx, types.NewEIP155Signer(big.NewInt(1)), key)
 		if err != nil {
-			logger.Log.Println("Error from signied tx: ", err)
+			logger.Log.Println("Error from signed tx: ", err)
 		}
 
 		err = conn.SendTransaction(ctx, signTx)
