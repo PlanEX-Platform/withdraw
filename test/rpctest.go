@@ -1,8 +1,8 @@
 package main
 
 import (
-	"eth-withdraw/email"
-	"eth-withdraw/config"
+	"withdraw/email"
+	"withdraw/config"
 )
 
 func init() {

@@ -3,7 +3,7 @@ package tx
 import (
 	"fmt"
 	"github.com/go-pg/pg"
-	"eth-withdraw/logger"
+	"withdraw/logger"
 	"github.com/spf13/viper"
 )
 

@@ -3,7 +3,7 @@ package accounts
 import (
 	"encoding/hex"
 	"fmt"
-	"eth-withdraw/ciph"
+	"withdraw/ciph"
 	"github.com/go-pg/pg"
 	"github.com/rkuris/go.uuid"
 	"github.com/zhooq/go-ethereum/crypto"

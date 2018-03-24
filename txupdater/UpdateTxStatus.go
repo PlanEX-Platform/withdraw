@@ -2,14 +2,14 @@ package txupdater
 
 import (
 	"time"
-	"eth-withdraw/transactions"
-	"eth-withdraw/logger"
+	"withdraw/transactions"
+	"withdraw/logger"
 	"log"
 	"context"
 	"github.com/zhooq/go-ethereum/common"
 	"github.com/zhooq/go-ethereum/rpc"
 	"github.com/zhooq/go-ethereum/core/types"
-	"eth-withdraw/util"
+	"withdraw/util"
 	"github.com/spf13/viper"
 )
 
